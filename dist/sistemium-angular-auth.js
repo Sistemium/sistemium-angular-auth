@@ -39,7 +39,7 @@
 (function () {
   'use strict';
 
-  function authInterceptor($q, $injector, saToken) {
+  function authInterceptor($q, $injector, saToken, saaAppConfig) {
 
     return {
 
@@ -60,7 +60,10 @@
       responseError: function (response) {
 
         if (response.status === 401 || response.status === 403) {
-          $injector.get('$state').go('debt.login');
+          if (!saaAppConfig.loginState) {
+            throw new Error('saaAppConfig.loginState not defined...');
+          }
+          $injector.get('$state').go(saaAppConfig.loginState);
           saToken.destroy();
         }
         return $q.reject(response);
@@ -165,6 +168,9 @@ angular.module('sistemiumAngularAuth.models')
     var safeCb = Util.safeCb;
     var currentUser = {};
     var userRoles;
+    var rolesProperty = 'roles';
+    var loggedOffEventName = 'logged-off';
+    var loggedInEventName = 'logged-in';
 
     var Account = AuthSchema.model('saAccount');
 
@@ -176,7 +182,7 @@ angular.module('sistemiumAngularAuth.models')
           currentUser = res;
         });
         console.log('logged-in', res);
-        $rootScope.$broadcast('logged-in');
+        $rootScope.$broadcast(loggedInEventName);
       });
     }
 
@@ -243,7 +249,7 @@ angular.module('sistemiumAngularAuth.models')
       logout: function () {
         saToken.destroy();
         currentUser = {};
-        $rootScope.$broadcast('logged-off');
+        $rootScope.$broadcast(loggedOffEventName);
       },
 
       /**
@@ -301,12 +307,12 @@ angular.module('sistemiumAngularAuth.models')
       isLoggedIn: function (callback) {
 
         if (arguments.length === 0) {
-          return currentUser.hasOwnProperty('roles');
+          return currentUser.hasOwnProperty(rolesProperty);
         }
 
         return Auth.getCurrentUser(null)
           .then(function (user) {
-            var is = user.hasOwnProperty('roles');
+            var is = user.hasOwnProperty(rolesProperty);
             safeCb(callback)(is);
             return is;
           });
@@ -332,7 +338,7 @@ angular.module('sistemiumAngularAuth.models')
 
         return Auth.getCurrentUser(null)
           .then(function (user) {
-            var has = (user.hasOwnProperty('roles')) ?
+            var has = (user.hasOwnProperty(rolesProperty)) ?
               hasRole(user.roles, role) : false;
             safeCb(callback)(has);
             return has;

@@ -13,6 +13,9 @@
     var safeCb = Util.safeCb;
     var currentUser = {};
     var userRoles;
+    var rolesProperty = 'roles';
+    var loggedOffEventName = 'logged-off';
+    var loggedInEventName = 'logged-in';
 
     var Account = AuthSchema.model('saAccount');
 
@@ -24,7 +27,7 @@
           currentUser = res;
         });
         console.log('logged-in', res);
-        $rootScope.$broadcast('logged-in');
+        $rootScope.$broadcast(loggedInEventName);
       });
     }
 
@@ -91,7 +94,7 @@
       logout: function () {
         saToken.destroy();
         currentUser = {};
-        $rootScope.$broadcast('logged-off');
+        $rootScope.$broadcast(loggedOffEventName);
       },
 
       /**
@@ -149,12 +152,12 @@
       isLoggedIn: function (callback) {
 
         if (arguments.length === 0) {
-          return currentUser.hasOwnProperty('roles');
+          return currentUser.hasOwnProperty(rolesProperty);
         }
 
         return Auth.getCurrentUser(null)
           .then(function (user) {
-            var is = user.hasOwnProperty('roles');
+            var is = user.hasOwnProperty(rolesProperty);
             safeCb(callback)(is);
             return is;
           });
@@ -180,7 +183,7 @@
 
         return Auth.getCurrentUser(null)
           .then(function (user) {
-            var has = (user.hasOwnProperty('roles')) ?
+            var has = (user.hasOwnProperty(rolesProperty)) ?
               hasRole(user.roles, role) : false;
             safeCb(callback)(has);
             return has;

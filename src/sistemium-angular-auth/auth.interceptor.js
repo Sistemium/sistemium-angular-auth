@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  function authInterceptor($q, $injector, saToken) {
+  function authInterceptor($q, $injector, saToken, saaAppConfig) {
 
     return {
 
@@ -22,7 +22,10 @@
       responseError: function (response) {
 
         if (response.status === 401 || response.status === 403) {
-          $injector.get('$state').go('debt.login');
+          if (!saaAppConfig.loginState) {
+            throw new Error('saaAppConfig.loginState not defined...');
+          }
+          $injector.get('$state').go(saaAppConfig.loginState);
           saToken.destroy();
         }
         return $q.reject(response);
