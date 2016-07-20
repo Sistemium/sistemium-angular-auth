@@ -1,13 +1,15 @@
 {
   "name": "sistemium-angular-auth",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "authors": [
     {
       "name": "Albert",
       "email": "kovalevskij.albert@gmail.com"
     }
   ],
-  "main": ["dist/sistemiumangularauth.js"],
+  "main": [
+    "dist/sistemiumangularauth.js"
+  ],
   "ignore": [
     "src",
     "test",
