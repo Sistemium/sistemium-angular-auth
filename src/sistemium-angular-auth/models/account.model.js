@@ -1,11 +1,12 @@
 (function (ng) {
   'use strict';
   ng.module('sistemiumAngularAuth.models')
-    .run(function (Schema, appConfig) {
-      Schema.register({
+    .run(function (AuthSchema, saaAppConfig) {
+      console.log(saaAppConfig);
+      AuthSchema.register({
         name: 'saAccount',
         endpoint: '/account',
-        basePath: appConfig.authApiUrl,
+        basePath: saaAppConfig.authApiUrl,
         relations: {
           hasMany: {
             providerAccount: {

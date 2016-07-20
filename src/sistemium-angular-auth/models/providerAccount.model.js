@@ -4,10 +4,10 @@
   //TODO models for auth module
   angular.module('sistemiumAngularAuth.models')
 
-    .run(function (Schema, appConfig) {
-      Schema.register({
+    .run(function (AuthSchema, saaAppConfig) {
+      AuthSchema.register({
         name: 'saProviderAccount',
-        basePath: appConfig.apiUrl
+        basePath: saaAppConfig.apiUrl
       });
     });
 

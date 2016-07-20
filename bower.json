@@ -17,7 +17,9 @@
     "karma-*.conf.js",
     "**/.*"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "sistemium-angular": "^0.6.7"
+  },
   "devDependencies": {
     "angular-mocks": ">=1.2.0",
     "angular-scenario": ">=1.2.0",

@@ -17,18 +17,14 @@ describe('', function() {
   dependencies = module.requires;
   });
 
-  it('should load config module', function() {
-    expect(hasModule('sistemiumAngularAuth.config')).to.be.ok;
-  });
 
-  
 
-  
 
-  
+
+
   it('should load services module', function() {
     expect(hasModule('sistemiumAngularAuth.services')).to.be.ok;
   });
-  
+
 
 });

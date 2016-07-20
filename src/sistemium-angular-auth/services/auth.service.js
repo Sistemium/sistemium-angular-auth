@@ -7,14 +7,14 @@
                        $q,
                        saToken,
                        Util,
-                       Schema,
+                       AuthSchema,
                        $rootScope) {
 
     var safeCb = Util.safeCb;
     var currentUser = {};
     var userRoles;
 
-    var Account = Schema.model('saAccount');
+    var Account = AuthSchema.model('saAccount');
 
 
     if (saToken.get() && $location.path() !== '/logout') {

@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('sistemiumAngularAuth.services', ['sistemium.schema'])
-  .service('Schema', function (saSchema,$http) {
+angular.module('sistemiumAngularAuth.services')
+  .service('AuthSchema', function (saSchema,$http) {
 
     return saSchema({
 

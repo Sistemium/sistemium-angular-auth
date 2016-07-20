@@ -4,21 +4,14 @@
   // and are loaded in the correct order to satisfy dependency injection
   // before all nested files are concatenated by Gulp
 
-  // Config
-  angular.module('sistemiumAngularAuth.config', [])
-    .value('sistemiumAngularAuth.config', {
-      debug: true
-    });
-
   // Modules
-  angular.module('sistemiumAngularAuth.services', []);
   angular.module('sistemiumAngularAuth',
     [
+      'sistemium',
       'sistemium.schema',
       'sistemium.util',
       'ui.router',
       'LocalStorageModule',
-      'sistemiumAngularAuth.config',
       'sistemiumAngularAuth.services',
       'sistemiumAngularAuth.models'
     ])
@@ -35,6 +28,13 @@
   ng.module('sistemiumAngularAuth.models', ['sistemiumAngularAuth.services']);
 
 })(angular);
+
+(function () {
+  'use strict';
+
+  angular.module('sistemiumAngularAuth.services', ['sistemium.schema']);
+
+})();
 
 (function () {
   'use strict';
@@ -78,11 +78,12 @@
 (function (ng) {
   'use strict';
   ng.module('sistemiumAngularAuth.models')
-    .run(function (Schema, appConfig) {
-      Schema.register({
+    .run(function (AuthSchema, saaAppConfig) {
+      console.log(saaAppConfig);
+      AuthSchema.register({
         name: 'saAccount',
         endpoint: '/account',
-        basePath: appConfig.authApiUrl,
+        basePath: saaAppConfig.authApiUrl,
         relations: {
           hasMany: {
             providerAccount: {
@@ -97,34 +98,16 @@
 
 })(angular);
 
-(function (ng) {
-  'use strict';
-  ng.module('sistemiumAngularAuth.models')
-    .config(function () {})
-  ;
-
-})(angular);
-
-(function (ng) {
-  'use strict';
-  ng.module('sistemiumAngularAuth.models')
-    .constant('saaAppConfig', {
-      apiUrl: 'http://localhost:9080/api/'
-    })
-  ;
-
-})(angular);
-
 (function () {
   'use strict';
 
   //TODO models for auth module
   angular.module('sistemiumAngularAuth.models')
 
-    .run(function (Schema, appConfig) {
-      Schema.register({
+    .run(function (AuthSchema, saaAppConfig) {
+      AuthSchema.register({
         name: 'saProviderAccount',
-        basePath: appConfig.apiUrl
+        basePath: saaAppConfig.apiUrl
       });
     });
 
@@ -176,14 +159,14 @@ angular.module('sistemiumAngularAuth.models')
                        $q,
                        saToken,
                        Util,
-                       Schema,
+                       AuthSchema,
                        $rootScope) {
 
     var safeCb = Util.safeCb;
     var currentUser = {};
     var userRoles;
 
-    var Account = Schema.model('saAccount');
+    var Account = AuthSchema.model('saAccount');
 
 
     if (saToken.get() && $location.path() !== '/logout') {
@@ -391,8 +374,8 @@ angular.module('sistemiumAngularAuth.models')
 
 'use strict';
 
-angular.module('sistemiumAngularAuth.services', ['sistemium.schema'])
-  .service('Schema', function (saSchema,$http) {
+angular.module('sistemiumAngularAuth.services')
+  .service('AuthSchema', function (saSchema,$http) {
 
     return saSchema({
 
