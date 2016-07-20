@@ -1,0 +1,28 @@
+{
+  "generator-angularjs-library": {
+    "props": {
+      "author": {
+        "name": "Albert",
+        "email": "kovalevskij.albert@gmail.com"
+      },
+      "libraryName": {
+        "original": "sistemiumAngularAuth",
+        "camelized": "sistemiumAngularAuth",
+        "dasherized": "sistemium-angular-auth",
+        "slugified": "sistemiumangularauth",
+        "parts": [
+          "sistemiumangularauth"
+        ]
+      },
+      "includeModuleDirectives": false,
+      "includeModuleFilters": false,
+      "includeModuleServices": true,
+      "includeAngularModuleResource": false,
+      "includeAngularModuleCookies": false,
+      "includeAngularModuleSanitize": false,
+      "librarySrcDirectory": "src/sistemium-angular-auth",
+      "libraryUnitTestDirectory": "test/unit/sistemium-angular-auth",
+      "libraryUnitE2eDirectory": "test/e2e/sistemium-angular-auth"
+    }
+  }
+}
