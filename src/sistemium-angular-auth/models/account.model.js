@@ -2,7 +2,6 @@
   'use strict';
   ng.module('sistemiumAngularAuth.models')
     .run(function (AuthSchema, saaAppConfig) {
-      console.log(saaAppConfig);
       AuthSchema.register({
         name: 'saAccount',
         endpoint: '/account',
