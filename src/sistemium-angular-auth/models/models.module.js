@@ -1,6 +1,7 @@
-(function (ng) {
-  'use strict';
+'use strict';
 
-  ng.module('sistemiumAngularAuth.models', ['sistemiumAngularAuth.services']);
+(function () {
 
-})(angular);
+  angular.module('sistemiumAngularAuth.models', ['sistemiumAngularAuth.services']);
+
+})();

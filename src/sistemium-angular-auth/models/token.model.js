@@ -1,36 +1,36 @@
 'use strict';
 
-(function() {
+(function () {
 
-function TokenStore(localStorageService,$rootScope) {
+  function TokenStore(localStorageService, $rootScope) {
 
-  var KEY = 'access-token';
+    var KEY = 'access-token';
 
-  var token = localStorageService.get(KEY);
+    var token = localStorageService.get(KEY);
 
-  $rootScope.$on('logged-off',function(){
-    token = undefined;
-  });
+    $rootScope.$on('logged-off', function () {
+      token = undefined;
+    });
 
-  return {
-    get: function () {
-      return token;
-    },
+    return {
+      get: function () {
+        return token;
+      },
 
-    save: function (newToken) {
-      token = newToken;
-      localStorageService.set (KEY,newToken);
-    },
+      save: function (newToken) {
+        token = newToken;
+        localStorageService.set(KEY, newToken);
+      },
 
-    destroy: function () {
-      localStorageService.remove(KEY);
-    }
+      destroy: function () {
+        localStorageService.remove(KEY);
+      }
 
-  };
+    };
 
-}
+  }
 
-angular.module('sistemiumAngularAuth.models')
-  .service('saToken', TokenStore);
+  angular.module('sistemiumAngularAuth.models')
+    .service('saToken', TokenStore);
 
 })();

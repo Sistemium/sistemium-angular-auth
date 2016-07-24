@@ -1,6 +1,8 @@
-(function (ng) {
-  'use strict';
-  ng.module('sistemiumAngularAuth.models')
+'use strict';
+
+(function () {
+
+  angular.module('sistemiumAngularAuth.models')
     .run(function (AuthSchema, saaAppConfig) {
       AuthSchema.register({
         name: 'saAccount',
@@ -18,4 +20,4 @@
     })
   ;
 
-})(angular);
+})();

@@ -1,5 +1,6 @@
+'use strict';
+
 (function () {
-  'use strict';
 
   //TODO models for auth module
   angular.module('sistemiumAngularAuth.models')
