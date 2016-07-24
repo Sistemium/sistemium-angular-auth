@@ -1,4 +1,4 @@
-(function (angular) {
+(function () {
 
   // Create all modules and define dependencies to make sure they exist
   // and are loaded in the correct order to satisfy dependency injection
@@ -20,14 +20,15 @@
     })
   ;
 
-})(angular);
+})();
 
-(function (ng) {
-  'use strict';
+'use strict';
 
-  ng.module('sistemiumAngularAuth.models', ['sistemiumAngularAuth.services']);
+(function () {
 
-})(angular);
+  angular.module('sistemiumAngularAuth.models', ['sistemiumAngularAuth.services']);
+
+})();
 
 (function () {
   'use strict';
@@ -78,11 +79,12 @@
 
 })();
 
-(function (ng) {
-  'use strict';
-  ng.module('sistemiumAngularAuth.models')
+'use strict';
+
+(function () {
+
+  angular.module('sistemiumAngularAuth.models')
     .run(function (AuthSchema, saaAppConfig) {
-      console.log(saaAppConfig);
       AuthSchema.register({
         name: 'saAccount',
         endpoint: '/account',
@@ -99,10 +101,11 @@
     })
   ;
 
-})(angular);
+})();
+
+'use strict';
 
 (function () {
-  'use strict';
 
   //TODO models for auth module
   angular.module('sistemiumAngularAuth.models')
@@ -118,38 +121,38 @@
 
 'use strict';
 
-(function() {
+(function () {
 
-function TokenStore(localStorageService,$rootScope) {
+  function TokenStore(localStorageService, $rootScope) {
 
-  var KEY = 'access-token';
+    var KEY = 'access-token';
 
-  var token = localStorageService.get(KEY);
+    var token = localStorageService.get(KEY);
 
-  $rootScope.$on('logged-off',function(){
-    token = undefined;
-  });
+    $rootScope.$on('logged-off', function () {
+      token = undefined;
+    });
 
-  return {
-    get: function () {
-      return token;
-    },
+    return {
+      get: function () {
+        return token;
+      },
 
-    save: function (newToken) {
-      token = newToken;
-      localStorageService.set (KEY,newToken);
-    },
+      save: function (newToken) {
+        token = newToken;
+        localStorageService.set(KEY, newToken);
+      },
 
-    destroy: function () {
-      localStorageService.remove(KEY);
-    }
+      destroy: function () {
+        localStorageService.remove(KEY);
+      }
 
-  };
+    };
 
-}
+  }
 
-angular.module('sistemiumAngularAuth.models')
-  .service('saToken', TokenStore);
+  angular.module('sistemiumAngularAuth.models')
+    .service('saToken', TokenStore);
 
 })();
 
