@@ -65,9 +65,10 @@
               'authorization': token
             }
           })
-          .then(function (user) {
-            var currentUserId = user.data && user.data.tokenInfo && user.data.tokenInfo.id;
+          .then(function () {
+            //var currentUserId = user.data && user.data.tokenInfo && user.data.tokenInfo.id;
             saToken.save(token);
+
             Account.find('me')
               .then(function (account) {
                 currentUser = account;
