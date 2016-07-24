@@ -1,3 +1,18 @@
+'use strict';
+
+(function () {
+
+  angular.module('sistemiumAngularAuth.models', ['sistemiumAngularAuth.services']);
+
+})();
+
+(function () {
+  'use strict';
+
+  angular.module('sistemiumAngularAuth.services', ['sistemium.schema']);
+
+})();
+
 (function () {
 
   // Create all modules and define dependencies to make sure they exist
@@ -19,21 +34,6 @@
       $httpProvider.interceptors.push('saAuthInterceptor');
     })
   ;
-
-})();
-
-'use strict';
-
-(function () {
-
-  angular.module('sistemiumAngularAuth.models', ['sistemiumAngularAuth.services']);
-
-})();
-
-(function () {
-  'use strict';
-
-  angular.module('sistemiumAngularAuth.services', ['sistemium.schema']);
 
 })();
 
@@ -158,6 +158,34 @@
 
 'use strict';
 
+angular.module('sistemiumAngularAuth.services')
+  .service('AuthSchema', function (saSchema,$http) {
+
+    return saSchema({
+
+      getCount: function (params) {
+        var resource = this;
+        var bp = resource.getAdapter('http').defaults.basePath;
+        return $http.get(
+          bp + '/' + resource.endpoint,
+          {
+            params: angular.extend ({'agg:': 'count'}, params || {})
+          }
+        ).then(function (res) {
+          return parseInt (res.headers('x-aggregate-count')) || res.data && res.data.count;
+        });
+      },
+
+      getList: function (params) {
+        return this.findAll (params,{bypassCache:true});
+      }
+
+    });
+
+  });
+
+'use strict';
+
 (function () {
 
   function AuthService($location,
@@ -223,9 +251,10 @@
               'authorization': token
             }
           })
-          .then(function (user) {
-            var currentUserId = user.data && user.data.tokenInfo && user.data.tokenInfo.id;
+          .then(function () {
+            //var currentUserId = user.data && user.data.tokenInfo && user.data.tokenInfo.id;
             saToken.save(token);
+
             Account.find('me')
               .then(function (account) {
                 currentUser = account;
@@ -380,31 +409,3 @@
     .factory('saAuth', AuthService);
 
 })();
-
-'use strict';
-
-angular.module('sistemiumAngularAuth.services')
-  .service('AuthSchema', function (saSchema,$http) {
-
-    return saSchema({
-
-      getCount: function (params) {
-        var resource = this;
-        var bp = resource.getAdapter('http').defaults.basePath;
-        return $http.get(
-          bp + '/' + resource.endpoint,
-          {
-            params: angular.extend ({'agg:': 'count'}, params || {})
-          }
-        ).then(function (res) {
-          return parseInt (res.headers('x-aggregate-count')) || res.data && res.data.count;
-        });
-      },
-
-      getList: function (params) {
-        return this.findAll (params,{bypassCache:true});
-      }
-
-    });
-
-  });
