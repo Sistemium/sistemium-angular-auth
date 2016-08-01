@@ -21,7 +21,7 @@
       // Intercept 401s and redirect you to login
       responseError: function (response) {
 
-        if (response.status === 401 || response.status === 403) {
+        if (response.status === 401) {
           if (!saaAppConfig.loginState) {
             throw new Error('saaAppConfig.loginState not defined...');
           }
