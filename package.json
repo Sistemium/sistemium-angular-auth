@@ -5,7 +5,11 @@
     "name": "Albert",
     "email": "kovalevskij.albert@gmail.com"
   },
-  "dependencies": {},
+  "dependencies": {
+    "axios": "^0.13.1",
+    "js-data": "^2.9.0",
+    "js-data-http-node": "^3.0.0-alpha.1"
+  },
   "devDependencies": {
     "chai": "^1.9.1",
     "chai-jquery": "^1.2.3",
