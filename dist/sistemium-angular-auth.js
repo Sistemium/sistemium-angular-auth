@@ -188,7 +188,7 @@ angular.module('sistemiumAngularAuth.services')
 
 (function () {
 
-  function AuthService($location,
+  function saAuth($location,
                        $http,
                        $q,
                        saToken,
@@ -203,21 +203,34 @@ angular.module('sistemiumAngularAuth.services')
     var loggedOffEventName = 'logged-off';
     var loggedInEventName = 'logged-in';
 
+    var Auth = {};
+
     var Account = AuthSchema.model('saAccount');
 
+    function configurableAuth (config) {
 
-    if (saToken.get() && $location.path() !== '/logout') {
-      currentUser = Account.find('me');
-      currentUser.then(function (res) {
-        Account.loadRelations(res, ['saProviderAccount']).then(function () {
-          currentUser = res;
+      Auth.config = config;
+
+      if (config.Account) {
+        Account = config.Account;
+      }
+
+      if (saToken.get() && $location.path() !== '/logout') {
+        currentUser = Account.find('me');
+        currentUser.then(function (res) {
+          Account.loadRelations(res, ['saProviderAccount']).then(function () {
+            currentUser = res;
+          });
+          console.log('logged-in', res);
+          $rootScope.$broadcast(loggedInEventName);
         });
-        console.log('logged-in', res);
-        $rootScope.$broadcast(loggedInEventName);
-      });
+      }
+
+      return Auth;
     }
 
-    var Auth = {
+
+    angular.extend(Auth,{
 
       loginWithMobileNumber: function (mobileNumber) {
 
@@ -397,15 +410,13 @@ angular.module('sistemiumAngularAuth.services')
       getToken: function () {
         return saToken.get();
       }
-    };
 
-    return function (config) {
-      Auth.config = config;
-      return Auth;
-    };
+    });
+
+    return configurableAuth;
   }
 
   angular.module('sistemiumAngularAuth.services')
-    .factory('saAuth', AuthService);
+    .factory('saAuth', saAuth);
 
 })();
