@@ -2,7 +2,7 @@
 
 (function () {
 
-  function TokenStore(localStorageService, $rootScope) {
+  function saToken(localStorageService, $rootScope) {
 
     var KEY = 'access-token';
 
@@ -31,6 +31,6 @@
   }
 
   angular.module('sistemiumAngularAuth.models')
-    .service('saToken', TokenStore);
+    .service('saToken', saToken);
 
 })();
