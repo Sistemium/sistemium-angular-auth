@@ -325,14 +325,12 @@ angular.module('sistemiumAngularAuth.services')
        * @return {Object|Promise}
        */
       getCurrentUser: function (callback) {
-        if (arguments.length === 0) {
 
+        if (arguments.length === 0) {
           return currentUser;
         }
 
-        var value = (currentUser.hasOwnProperty('$$state')) ?
-          currentUser : currentUser;
-        return $q.when(value)
+        return $q.when(currentUser)
           .then(function (user) {
             safeCb(callback)(user);
             return user;
