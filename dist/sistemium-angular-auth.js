@@ -232,25 +232,6 @@ angular.module('sistemiumAngularAuth.services')
 
     angular.extend(Auth,{
 
-      loginWithMobileNumber: function (mobileNumber) {
-
-        return $http.get(Auth.config.phaUrl + mobileNumber);
-
-      },
-
-      authWithSmsCode: function (id, code) {
-
-        return $http.get(Auth.config.authUrl + '/auth/pha/' + id + '/' + code)
-          .then(function (res) {
-            var token = res.headers('x-access-token');
-            return {
-              token: token,
-              user: res.data
-            };
-          });
-
-      },
-
       /**
        * Authenticate user and save token
        *
