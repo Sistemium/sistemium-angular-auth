@@ -41,8 +41,8 @@ gulp.task('build', function() {
     .pipe(plumber())
     .pipe(concat('sistemium-angular-auth.js'))
     .pipe(gulp.dest('./dist/'))
-    .pipe(uglify())
-    .pipe(rename('sistemium-angular-auth.min.js'))
+    //.pipe(uglify())
+    //.pipe(rename('sistemium-angular-auth.min.js'))
     .pipe(gulp.dest('./dist'));
 });
 
