@@ -3,12 +3,12 @@
 (function () {
 
   function saAuth($location,
-                       $http,
-                       $q,
-                       saToken,
-                       Util,
-                       AuthSchema,
-                       $rootScope) {
+                  $http,
+                  $q,
+                  saToken,
+                  Util,
+                  AuthSchema,
+                  $rootScope) {
 
     var safeCb = Util.safeCb;
     var currentUser = {};
@@ -21,7 +21,7 @@
 
     var Account = AuthSchema.model('saAccount');
 
-    function configurableAuth (config) {
+    function configurableAuth(config) {
 
       Auth.config = config;
 
@@ -44,7 +44,7 @@
     }
 
 
-    angular.extend(Auth,{
+    angular.extend(Auth, {
 
       /**
        * Authenticate user and save token
@@ -54,26 +54,31 @@
        * @return {Promise}
        */
       login: function (token, callback) {
+
+        token = token || Auth.getToken();
+
         return $http.get(Auth.config.authUrl + '/api/token/' + token, {
             headers: {
               'authorization': token
             }
           })
           .then(function () {
-            //var currentUserId = user.data && user.data.tokenInfo && user.data.tokenInfo.id;
+
             saToken.save(token);
 
-            Account.find('me')
+            var q = Account.find('me')
               .then(function (account) {
                 currentUser = account;
                 safeCb(callback)(null, currentUser);
                 $rootScope.$broadcast('logged-in');
                 return currentUser;
-              })
-              .catch(function (err) {
-                console.log(err);
-              })
-            ;
+              });
+
+            q.catch(function (err) {
+              console.error('saAuth.login:', err);
+            });
+
+            return q;
 
           })
           .catch(function (err) {
