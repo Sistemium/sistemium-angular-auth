@@ -191,6 +191,7 @@
        * @return {Bool|Promise}
        */
       isAdmin: function () {
+        // TODO test if is admin
         return Auth.hasRole
           .apply(Auth, [].concat.apply(['admin'], arguments));
       },

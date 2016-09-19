@@ -9,7 +9,6 @@
     [
       'sistemium',
       'sistemium.schema',
-      'sistemium.util',
       'ui.router',
       'LocalStorageModule',
       'sistemiumAngularAuth.services',

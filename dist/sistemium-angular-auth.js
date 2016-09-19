@@ -24,7 +24,6 @@
     [
       'sistemium',
       'sistemium.schema',
-      'sistemium.util',
       'ui.router',
       'LocalStorageModule',
       'sistemiumAngularAuth.services',
@@ -377,6 +376,7 @@ angular.module('sistemiumAngularAuth.services')
        * @return {Bool|Promise}
        */
       isAdmin: function () {
+        // TODO test if is admin
         return Auth.hasRole
           .apply(Auth, [].concat.apply(['admin'], arguments));
       },
