@@ -1,9 +1,13 @@
 {
   "name": "sistemium-angular-auth",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "authors": [
     {
-      "name": "Albert",
+      "name": "Alexander Levin",
+      "email": "a@sistemium.com"
+    },
+    {
+      "name": "Albert Kovalevskij",
       "email": "kovalevskij.albert@gmail.com"
     }
   ],
@@ -18,7 +22,7 @@
     "**/.*"
   ],
   "dependencies": {
-    "sistemium-angular": "^0.6.7",
+    "sistemium-angular": "^0.7.2",
     "angular-local-storage": "^0.3.0"
   },
   "devDependencies": {

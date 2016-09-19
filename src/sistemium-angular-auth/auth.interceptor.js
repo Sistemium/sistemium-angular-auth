@@ -1,5 +1,6 @@
+'use strict';
+
 (function () {
-  'use strict';
 
   function authInterceptor($q, $injector, saToken, saaAppConfig) {
 

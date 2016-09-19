@@ -6,10 +6,11 @@
 
 })();
 
-(function () {
-  'use strict';
+'use strict';
 
-  angular.module('sistemiumAngularAuth.services', ['sistemium.schema']);
+(function () {
+
+  angular.module('sistemiumAngularAuth.services', ['sistemium']);
 
 })();
 
@@ -36,8 +37,9 @@
 
 })();
 
+'use strict';
+
 (function () {
-  'use strict';
 
   function authInterceptor($q, $injector, saToken, saaAppConfig) {
 
@@ -83,19 +85,83 @@
 (function () {
 
   angular.module('sistemiumAngularAuth.models')
-    .run(function (AuthSchema, saaAppConfig) {
+    .run(function (AuthSchema) {
       AuthSchema.register({
         name: 'saAccount',
-        endpoint: '/account',
-        basePath: saaAppConfig.authApiUrl,
+
         relations: {
           hasMany: {
-            providerAccount: {
+            saProviderAccount: {
               localField: 'providers',
+              foreignKey: 'accountId'
+            },
+            saOrgAccount: {
+              localField: 'orgAccounts',
               foreignKey: 'accountId'
             }
           }
         }
+
+      });
+    })
+  ;
+
+})();
+
+'use strict';
+
+(function () {
+
+  angular.module('sistemiumAngularAuth.models')
+    .run(function (AuthSchema) {
+      AuthSchema.register({
+
+        name: 'saOrgAccount',
+
+        relations: {
+          hasOne: {
+            saAccount: {
+              localField: 'account',
+              localKey: 'accountId'
+            }
+          },
+          hasMany: {
+            saOrgAccountRole: {
+              localField: 'orgAccountRoles',
+              foreignKey: 'orgAccountId'
+            }
+          }
+        }
+
+      });
+    })
+  ;
+
+})();
+
+'use strict';
+
+(function () {
+
+  angular.module('sistemiumAngularAuth.models')
+    .run(function (AuthSchema) {
+      AuthSchema.register({
+
+        name: 'saOrgAccountRole',
+
+        relations: {
+          hasOne: {
+            saOrgAccount: {
+              localField: 'orgAccount',
+              localKey: 'orgAccountId'
+            },
+            saRole: {
+              localField: 'role',
+              localKey: 'roleId'
+            }
+          }
+        }
+
       });
     })
   ;
@@ -109,12 +175,46 @@
   //TODO models for auth module
   angular.module('sistemiumAngularAuth.models')
 
-    .run(function (AuthSchema, saaAppConfig) {
+    .run(function (AuthSchema) {
       AuthSchema.register({
+
         name: 'saProviderAccount',
-        basePath: saaAppConfig.apiUrl
+
+        relations: {
+          hasOne: {
+            saAccount: {
+              localField: 'account',
+              localKey: 'accountId'
+            }
+          }
+        }
+
       });
     });
+
+})();
+
+'use strict';
+
+(function () {
+
+  angular.module('sistemiumAngularAuth.models')
+    .run(function (AuthSchema) {
+      AuthSchema.register({
+        name: 'saRole',
+
+        relations: {
+          hasMany: {
+            saOrgAccountRole: {
+              localField: 'orgAccountRoles',
+              foreignKey: 'roleId'
+            }
+          }
+        }
+
+      });
+    })
+  ;
 
 })();
 
@@ -157,10 +257,14 @@
 
 'use strict';
 
-angular.module('sistemiumAngularAuth.services')
-  .service('AuthSchema', function (saSchema,$http) {
+(function () {
 
-    return saSchema({
+  angular.module('sistemiumAngularAuth.services')
+    .service('AuthSchema', AuthSchema);
+
+  function AuthSchema(saSchema, $http, saaAppConfig) {
+
+    var schema = saSchema({
 
       getCount: function (params) {
         var resource = this;
@@ -168,32 +272,45 @@ angular.module('sistemiumAngularAuth.services')
         return $http.get(
           bp + '/' + resource.endpoint,
           {
-            params: angular.extend ({'agg:': 'count'}, params || {})
+            params: angular.extend({'agg:': 'count'}, params || {})
           }
         ).then(function (res) {
-          return parseInt (res.headers('x-aggregate-count')) || res.data && res.data.count;
+          return parseInt(res.headers('x-aggregate-count')) || res.data && res.data.count;
         });
       },
 
       getList: function (params) {
-        return this.findAll (params,{bypassCache:true});
+        return this.findAll(params, {bypassCache: true});
       }
 
     });
 
-  });
+    return _.defaults({
+
+      register: function (config) {
+        return schema.register(_.defaults(config, {
+          basePath: saaAppConfig.authApiUrl,
+          endpoint: config.name.replace(/^sa(.)/, function (p,l) { return l.toLowerCase(); })
+        }));
+      }
+
+    }, schema);
+
+  }
+
+})();
 
 'use strict';
 
 (function () {
 
   function saAuth($location,
-                       $http,
-                       $q,
-                       saToken,
-                       Util,
-                       AuthSchema,
-                       $rootScope) {
+                  $http,
+                  $q,
+                  saToken,
+                  Util,
+                  AuthSchema,
+                  $rootScope) {
 
     var safeCb = Util.safeCb;
     var currentUser = {};
@@ -205,8 +322,10 @@ angular.module('sistemiumAngularAuth.services')
     var Auth = {};
 
     var Account = AuthSchema.model('saAccount');
+    var OrgAccount = AuthSchema.model('saOrgAccount');
+    var OrgAccountRole = AuthSchema.model('saOrgAccountRole');
 
-    function configurableAuth (config) {
+    function configurableAuth(config) {
 
       Auth.config = config;
 
@@ -215,21 +334,36 @@ angular.module('sistemiumAngularAuth.services')
       }
 
       if (saToken.get() && $location.path() !== '/logout') {
-        currentUser = Account.find('me');
-        currentUser.then(function (res) {
-          Account.loadRelations(res, ['saProviderAccount']).then(function () {
-            currentUser = res;
+
+        currentUser = Account.find('me')
+          .then(function (account) {
+
+            return Account.loadRelations(account)
+              .then(function () {
+                return config.loadRoles ? $q.all(_.map(account.orgAccounts, function (orgAccount) {
+                  return OrgAccount.loadRelations(orgAccount)
+                    .then(function(){
+                      return $q.all(_.map(orgAccount.orgAccountRoles, function(orgAccountRole) {
+                        return OrgAccountRole.loadRelations(orgAccountRole, 'saRole');
+                      }));
+                    });
+                })) : account;
+              })
+              .then(function () {
+                currentUser = account;
+                console.log('logged-in', account);
+                $rootScope.$broadcast(loggedInEventName);
+                return account;
+              });
+
           });
-          console.log('logged-in', res);
-          $rootScope.$broadcast(loggedInEventName);
-        });
       }
 
       return Auth;
     }
 
 
-    angular.extend(Auth,{
+    angular.extend(Auth, {
 
       /**
        * Authenticate user and save token
@@ -239,26 +373,31 @@ angular.module('sistemiumAngularAuth.services')
        * @return {Promise}
        */
       login: function (token, callback) {
+
+        token = token || Auth.getToken();
+
         return $http.get(Auth.config.authUrl + '/api/token/' + token, {
-            headers: {
-              'authorization': token
-            }
-          })
+          headers: {
+            'authorization': token
+          }
+        })
           .then(function () {
-            //var currentUserId = user.data && user.data.tokenInfo && user.data.tokenInfo.id;
+
             saToken.save(token);
 
-            Account.find('me')
+            var q = Account.find('me')
               .then(function (account) {
                 currentUser = account;
                 safeCb(callback)(null, currentUser);
                 $rootScope.$broadcast('logged-in');
                 return currentUser;
-              })
-              .catch(function (err) {
-                console.log(err);
-              })
-            ;
+              });
+
+            q.catch(function (err) {
+              console.error('saAuth.login:', err);
+            });
+
+            return q;
 
           })
           .catch(function (err) {

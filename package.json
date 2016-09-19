@@ -1,10 +1,17 @@
 {
   "name": "sistemium-angular-auth",
   "version": "0.1.0",
-  "author": {
-    "name": "Albert",
-    "email": "kovalevskij.albert@gmail.com"
-  },
+  "author": "Sistemium UAB <uab@sistemium.com>",
+  "contributors": [
+    {
+      "name": "Alexander Levin",
+      "email": "a@sistemium.com"
+    },
+    {
+      "name": "Albert Kovalevskij",
+      "email": "kovalevskij.albert@gmail.com"
+    }
+  ],
   "dependencies": {
     "axios": "^0.13.1",
     "js-data": "^2.9.0",

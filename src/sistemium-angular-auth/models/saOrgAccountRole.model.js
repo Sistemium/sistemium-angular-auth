@@ -5,17 +5,18 @@
   angular.module('sistemiumAngularAuth.models')
     .run(function (AuthSchema) {
       AuthSchema.register({
-        name: 'saAccount',
+
+        name: 'saOrgAccountRole',
 
         relations: {
-          hasMany: {
-            saProviderAccount: {
-              localField: 'providers',
-              foreignKey: 'accountId'
-            },
+          hasOne: {
             saOrgAccount: {
-              localField: 'orgAccounts',
-              foreignKey: 'accountId'
+              localField: 'orgAccount',
+              localKey: 'orgAccountId'
+            },
+            saRole: {
+              localField: 'role',
+              localKey: 'roleId'
             }
           }
         }
