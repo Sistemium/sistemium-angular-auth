@@ -8,8 +8,6 @@
   angular.module('sistemiumAngularAuth',
     [
       'sistemium',
-      'sistemium.schema',
-      'sistemium.util',
       'ui.router',
       'LocalStorageModule',
       'sistemiumAngularAuth.services',

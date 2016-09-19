@@ -1,6 +1,7 @@
-(function () {
-  'use strict';
+'use strict';
 
-  angular.module('sistemiumAngularAuth.services', ['sistemium.schema']);
+(function () {
+
+  angular.module('sistemiumAngularAuth.services', ['sistemium']);
 
 })();
