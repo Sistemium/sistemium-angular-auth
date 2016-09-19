@@ -2,13 +2,11 @@
 
 (function () {
 
-  //TODO models for auth module
   angular.module('sistemiumAngularAuth.models')
-
     .run(function (AuthSchema) {
       AuthSchema.register({
 
-        name: 'saProviderAccount',
+        name: 'saOrgAccount',
 
         relations: {
           hasOne: {
@@ -16,10 +14,17 @@
               localField: 'account',
               localKey: 'accountId'
             }
+          },
+          hasMany: {
+            saOrgAccountRole: {
+              localField: 'orgAccountRoles',
+              foreignKey: 'orgAccountId'
+            }
           }
         }
 
       });
-    });
+    })
+  ;
 
 })();
