@@ -18,7 +18,7 @@
     "**/.*"
   ],
   "dependencies": {
-    "sistemium-angular": "^0.6.7",
+    "sistemium-angular": "^0.7.2",
     "angular-local-storage": "^0.3.0"
   },
   "devDependencies": {
