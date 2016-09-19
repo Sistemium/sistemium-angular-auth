@@ -20,6 +20,8 @@
     var Auth = {};
 
     var Account = AuthSchema.model('saAccount');
+    var OrgAccount = AuthSchema.model('saOrgAccount');
+    var OrgAccountRole = AuthSchema.model('saOrgAccountRole');
 
     function configurableAuth(config) {
 
@@ -30,14 +32,29 @@
       }
 
       if (saToken.get() && $location.path() !== '/logout') {
-        currentUser = Account.find('me');
-        currentUser.then(function (res) {
-          Account.loadRelations(res, ['saProviderAccount']).then(function () {
-            currentUser = res;
+
+        currentUser = Account.find('me')
+          .then(function (account) {
+
+            return Account.loadRelations(account)
+              .then(function () {
+                return config.loadRoles ? $q.all(_.map(account.orgAccounts, function (orgAccount) {
+                  return OrgAccount.loadRelations(orgAccount)
+                    .then(function(){
+                      return $q.all(_.map(orgAccount.orgAccountRoles, function(orgAccountRole) {
+                        return OrgAccountRole.loadRelations(orgAccountRole, 'saRole');
+                      }));
+                    });
+                })) : account;
+              })
+              .then(function () {
+                currentUser = account;
+                console.log('logged-in', account);
+                $rootScope.$broadcast(loggedInEventName);
+                return account;
+              });
+
           });
-          console.log('logged-in', res);
-          $rootScope.$broadcast(loggedInEventName);
-        });
       }
 
       return Auth;
@@ -58,10 +75,10 @@
         token = token || Auth.getToken();
 
         return $http.get(Auth.config.authUrl + '/api/token/' + token, {
-            headers: {
-              'authorization': token
-            }
-          })
+          headers: {
+            'authorization': token
+          }
+        })
           .then(function () {
 
             saToken.save(token);
