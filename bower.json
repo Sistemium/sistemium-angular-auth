@@ -3,7 +3,11 @@
   "version": "0.1.8",
   "authors": [
     {
-      "name": "Albert",
+      "name": "Alexander Levin",
+      "email": "a@sistemium.com"
+    },
+    {
+      "name": "Albert Kovalevskij",
       "email": "kovalevskij.albert@gmail.com"
     }
   ],
