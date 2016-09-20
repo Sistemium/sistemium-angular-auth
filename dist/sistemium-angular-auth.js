@@ -325,6 +325,34 @@
     var OrgAccount = AuthSchema.model('saOrgAccount');
     var OrgAccountRole = AuthSchema.model('saOrgAccountRole');
 
+
+    function setCurrentUser () {
+
+      return Account.find('me')
+        .then(function (account) {
+
+          return Account.loadRelations(account)
+            .then(function () {
+              return Auth.config.loadRoles ? $q.all(_.map(account.orgAccounts, function (orgAccount) {
+                return OrgAccount.loadRelations(orgAccount)
+                  .then(function(){
+                    return $q.all(_.map(orgAccount.orgAccountRoles, function(orgAccountRole) {
+                      return OrgAccountRole.loadRelations(orgAccountRole, 'saRole');
+                    }));
+                  });
+              })) : account;
+            })
+            .then(function () {
+              currentUser = account;
+              console.log('logged-in', account);
+              $rootScope.$broadcast(loggedInEventName);
+              return account;
+            });
+
+        });
+
+    }
+
     function configurableAuth(config) {
 
       Auth.config = config;
@@ -334,29 +362,7 @@
       }
 
       if (saToken.get() && $location.path() !== '/logout') {
-
-        currentUser = Account.find('me')
-          .then(function (account) {
-
-            return Account.loadRelations(account)
-              .then(function () {
-                return config.loadRoles ? $q.all(_.map(account.orgAccounts, function (orgAccount) {
-                  return OrgAccount.loadRelations(orgAccount)
-                    .then(function(){
-                      return $q.all(_.map(orgAccount.orgAccountRoles, function(orgAccountRole) {
-                        return OrgAccountRole.loadRelations(orgAccountRole, 'saRole');
-                      }));
-                    });
-                })) : account;
-              })
-              .then(function () {
-                currentUser = account;
-                console.log('logged-in', account);
-                $rootScope.$broadcast(loggedInEventName);
-                return account;
-              });
-
-          });
+        currentUser = setCurrentUser();
       }
 
       return Auth;
@@ -385,13 +391,7 @@
 
             saToken.save(token);
 
-            var q = Account.find('me')
-              .then(function (account) {
-                currentUser = account;
-                safeCb(callback)(null, currentUser);
-                $rootScope.$broadcast('logged-in');
-                return currentUser;
-              });
+            var q = setCurrentUser();
 
             q.catch(function (err) {
               console.error('saAuth.login:', err);
@@ -427,7 +427,7 @@
         return Account.create(user).then(
           function (data) {
             saToken.save(data.token);
-            currentUser = Account.find('me');
+            currentUser = setCurrentUser();
             return safeCb(callback)(null, user);
           },
           function (err) {
