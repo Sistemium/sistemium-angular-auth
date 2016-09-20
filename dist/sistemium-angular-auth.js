@@ -304,22 +304,18 @@
 
 (function () {
 
-  function saAuth($location,
-                  $http,
-                  $q,
-                  saToken,
-                  Util,
-                  AuthSchema,
-                  $rootScope) {
+  function saAuth($location, $http, $q, saToken, Util, AuthSchema, $rootScope) {
 
-    var safeCb = Util.safeCb;
-    var currentUser = {};
-    var userRoles;
-    var rolesProperty = 'roles';
     var loggedOffEventName = 'logged-off';
     var loggedInEventName = 'logged-in';
+    var loggingInEventName = 'logging-in';
+    var rolesProperty = 'roles';
+
+    var safeCb = Util.safeCb;
 
     var Auth = {};
+    var currentUser = {};
+    var userRoles;
 
     var Account = AuthSchema.model('saAccount');
     var OrgAccount = AuthSchema.model('saOrgAccount');
@@ -328,7 +324,7 @@
 
     function setCurrentUser () {
 
-      return Account.find('me')
+      var q = Account.find('me')
         .then(function (account) {
 
           return Account.loadRelations(account)
@@ -344,12 +340,15 @@
             })
             .then(function () {
               currentUser = account;
-              console.log('logged-in', account);
-              $rootScope.$broadcast(loggedInEventName);
+              console.log(loggedInEventName, account);
+              $rootScope.$broadcast(loggedInEventName, currentUser);
               return account;
             });
 
         });
+
+      $rootScope.$broadcast(loggingInEventName, q);
+      return q;
 
     }
 
