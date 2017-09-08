@@ -32,6 +32,7 @@
 
       register: function (config) {
         return schema.register(_.defaults(config, {
+          defaultAdapter: 'http',
           basePath: saaAppConfig.authApiUrl,
           endpoint: config.name.replace(/^sa(.)/, function (p,l) { return l.toLowerCase(); })
         }));
