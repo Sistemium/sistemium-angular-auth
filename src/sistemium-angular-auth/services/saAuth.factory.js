@@ -38,7 +38,6 @@
             })
             .then(function () {
               currentUser = account;
-              console.log(loggedInEventName, account);
               $rootScope.$broadcast(loggedInEventName, currentUser);
               return account;
             });
@@ -52,13 +51,18 @@
 
     function configurableAuth(config) {
 
+      config = config || {
+        disableAutoLogin: false,
+        Account: false
+      };
+
       Auth.config = config;
 
       if (config.Account) {
         Account = config.Account;
       }
 
-      if (saToken.get() && $location.path() !== '/logout') {
+      if (!config.disableAutoLogin && saToken.get() && $location.path() !== '/logout') {
         currentUser = setCurrentUser();
       }
 
